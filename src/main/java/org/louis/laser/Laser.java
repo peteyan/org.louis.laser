@@ -54,7 +54,7 @@ public final class Laser {
 	private static final Laser laser;
 	private static final AtomicInteger HEADER = new AtomicInteger(-1);
 	private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
-	private Map<Class<?>, Codec<Object>> codecs = new HashMap<Class<?>, Codec<Object>>();
+	private Map<Class<?>, Codec<?>> codecs = new HashMap<Class<?>, Codec<?>>();
 	private Map<Class<?>, Class<? extends Codec>> codecTypes = new HashMap<Class<?>, Class<? extends Codec>>();
 	private Map<Class<?>, Integer> typeToHeaders = new HashMap<Class<?>, Integer>();
 	private Map<Integer, Class<?>> headerToTypes = new HashMap<Integer, Class<?>>();
@@ -128,7 +128,7 @@ public final class Laser {
 	}
 
 	protected void registerCodec(Class<?> type, Codec<?> codec, boolean createHeader) {
-		codecs.put(type, (Codec<Object>) codec);
+		codecs.put(type, (Codec<?>) codec);
 		if (createHeader) {
 			typeToHeaders.put(type, HEADER.incrementAndGet());
 			headerToTypes.put(HEADER.get(), type);
@@ -153,10 +153,10 @@ public final class Laser {
 	}
 
 	public <T> Codec<T> getCodec(Class<T> type) {
-		return getCodec(type, null);
+		return (Codec<T>) getCodec(type, null);
 	}
 
-	public Codec getCodec(Class<?> type, Class<?>[] genericTypes) {
+	public Codec<?> getCodec(Class<?> type, Class<?>[] genericTypes) {
 		Codec<?> codec = (Codec<?>) codecs.get(type);
 		if (codec == null) {
 			if (type.isEnum()) {
