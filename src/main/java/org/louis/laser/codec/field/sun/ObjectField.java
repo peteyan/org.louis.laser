@@ -2,6 +2,7 @@ package org.louis.laser.codec.field.sun;
 
 import java.lang.reflect.Field;
 
+import org.louis.laser.Context;
 import org.louis.laser.Laser;
 import org.louis.laser.codec.Codec;
 import org.louis.laser.codec.field.FieldDefinition;
@@ -29,20 +30,20 @@ public class ObjectField<T> extends FieldDefinition {
 	}
 
 	@Override
-	protected void encode(Laser laser, OutputStream output, Object obj) throws Exception {
+	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
 		T value = get(obj);
 		output.writeBoolean(value != null);
 		if (value == null) {
 			return;
 		}
-		codec.encode(laser, output, value);
+		codec.encode(laser, context, output, value);
 	}
 
 	@Override
-	protected void decode(Laser laser, InputStream in, Object obj) throws Exception {
+	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
 		boolean b = in.readBoolean();
 		if (b) {
-			T value = codec.decode(laser, in, fieldType);
+			T value = codec.decode(laser, context, in, fieldType);
 			set(obj, value);
 		} else {
 			set(obj, null);

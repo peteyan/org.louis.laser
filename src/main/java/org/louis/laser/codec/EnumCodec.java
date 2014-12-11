@@ -1,5 +1,6 @@
 package org.louis.laser.codec;
 
+import org.louis.laser.Context;
 import org.louis.laser.Laser;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
@@ -13,7 +14,7 @@ public class EnumCodec implements Codec<Enum<?>> {
 	}
 
 	@Override
-	public void encode(Laser laser, OutputStream out, Enum<?> value) throws Exception {
+	public void encode(Laser laser, Context context, OutputStream out, Enum<?> value) throws Exception {
 		if (value == null) {
 			out.writeInt(-1);
 			return;
@@ -22,7 +23,7 @@ public class EnumCodec implements Codec<Enum<?>> {
 	}
 
 	@Override
-	public Enum<?> decode(Laser laser, InputStream in, Class<Enum<?>> type) throws Exception {
+	public Enum<?> decode(Laser laser, Context context, InputStream in, Class<Enum<?>> type) throws Exception {
 		int ordinal = in.readInt();
 		if (ordinal == -1) {
 			return null;

@@ -3,6 +3,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.louis.laser.Context;
 import org.louis.laser.Laser;
 import org.louis.laser.io.ByteArrayInputStream;
 import org.louis.laser.io.ByteArrayOutputStream;
@@ -20,18 +21,18 @@ public class LaserTest {
 		as.put("c", new C("3"));
 		M m = new M(as, list);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		Laser.laser().writeClassAndObject(out, m);
+		Laser.laser().writeClassAndObject(new Context(), out, m);
 		System.out.println(out.toByteArray().length);
-		Object readClassAndObject = Laser.laser().readClassAndObject(new ByteArrayInputStream(out.toByteArray()));
+		Object readClassAndObject = Laser.laser().readClassAndObject(new Context(), new ByteArrayInputStream(out.toByteArray()));
 		System.out.println(readClassAndObject);
 
 	}
 
 	static class M {
-		private int i = 0;
-		private Integer j = 1;
-		private List<C> list;
-		private Map<String, A> as;
+		int i = 0;
+		Integer j = 1;
+		List<C> list;
+		Map<String, A> as;
 
 		public M(Map<String, A> as, List<C> list) {
 			super();
@@ -46,7 +47,7 @@ public class LaserTest {
 			this.a = a;
 		}
 
-		private String a;
+		String a;
 	}
 
 	static class B extends A {
@@ -55,7 +56,7 @@ public class LaserTest {
 			this.b = b;
 		}
 
-		private String b;
+		String b;
 	}
 
 	static class C extends A {
@@ -65,7 +66,7 @@ public class LaserTest {
 			this.c = c;
 		}
 
-		private String c;
+		String c;
 	}
 
 }

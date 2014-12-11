@@ -4,6 +4,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.louis.laser.Context;
 import org.louis.laser.Laser;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
@@ -37,7 +38,7 @@ public abstract class MapCodec<K, V> implements Codec<Map<K, V>> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void encode(Laser laser, OutputStream out, Map<K, V> values) throws Exception {
+	public void encode(Laser laser, Context context, OutputStream out, Map<K, V> values) throws Exception {
 		if (values == null) {
 			out.writeInt(-1);
 			return;
@@ -63,31 +64,31 @@ public abstract class MapCodec<K, V> implements Codec<Map<K, V>> {
 				if (!isKeyFinal) {
 					if (keySameGeneric && writeKeyClass) {
 						writeKeyClass = false;
-						laser.writeClass(out, key.getClass());
+						laser.writeClass(context, out, key.getClass());
 						genericKeyCodec = (Codec<K>) laser.getCodec(key.getClass());
 					} else if (!keySameGeneric) {
-						laser.writeClass(out, key.getClass());
+						laser.writeClass(context, out, key.getClass());
 						genericKeyCodec = (Codec<K>) laser.getCodec(key.getClass());
 					}
 				}
 				if (!isValueFinal) {
 					if (valueSameGeneric && writeValueClass) {
 						writeValueClass = false;
-						laser.writeClass(out, value.getClass());
+						laser.writeClass(context, out, value.getClass());
 						genericValueCodec = (Codec<V>) laser.getCodec(value.getClass());
 					} else if (!valueSameGeneric) {
-						laser.writeClass(out, value.getClass());
+						laser.writeClass(context, out, value.getClass());
 						genericValueCodec = (Codec<V>) laser.getCodec(value.getClass());
 					}
 				}
-				genericKeyCodec.encode(laser, out, key);
-				genericValueCodec.encode(laser, out, value);
+				genericKeyCodec.encode(laser, context, out, key);
+				genericValueCodec.encode(laser, context, out, value);
 			}
 		}
 	}
 
 	@Override
-	public Map<K, V> decode(Laser laser, InputStream in, Class<Map<K, V>> type) throws Exception {
+	public Map<K, V> decode(Laser laser, Context context, InputStream in, Class<Map<K, V>> type) throws Exception {
 		int size = in.readInt();
 		if (size == -1) {
 			return null;
@@ -110,25 +111,25 @@ public abstract class MapCodec<K, V> implements Codec<Map<K, V>> {
 				if (!isKeyFinal) {
 					if (keySameGeneric && readKeyClass) {
 						readKeyClass = false;
-						genericKeyType = laser.readClass(in);
+						genericKeyType = laser.readClass(context, in);
 						genericKeyCodec = laser.getCodec(genericKeyType);
 					} else if (!keySameGeneric) {
-						genericKeyType = laser.readClass(in);
+						genericKeyType = laser.readClass(context, in);
 						genericKeyCodec = laser.getCodec(genericKeyType);
 					}
 				}
 				if (!isValueFinal) {
 					if (valueSameGeneric && readValueClass) {
 						readValueClass = false;
-						genericValueType = laser.readClass(in);
+						genericValueType = laser.readClass(context, in);
 						genericValueCodec = laser.getCodec(genericValueType);
 					} else if (!valueSameGeneric) {
-						genericValueType = laser.readClass(in);
+						genericValueType = laser.readClass(context, in);
 						genericValueCodec = laser.getCodec(genericValueType);
 					}
 				}
-				K key = genericKeyCodec.decode(laser, in, genericKeyType);
-				V value = genericValueCodec.decode(laser, in, genericValueType);
+				K key = genericKeyCodec.decode(laser, context, in, genericKeyType);
+				V value = genericValueCodec.decode(laser, context, in, genericValueType);
 				values.put(key, value);
 			}
 		}

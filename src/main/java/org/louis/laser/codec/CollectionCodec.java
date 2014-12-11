@@ -3,6 +3,7 @@ package org.louis.laser.codec;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
+import org.louis.laser.Context;
 import org.louis.laser.Laser;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
@@ -28,7 +29,7 @@ public abstract class CollectionCodec<T> implements Codec<Collection<T>> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void encode(Laser laser, OutputStream out, Collection<T> values) throws Exception {
+	public void encode(Laser laser, Context context, OutputStream out, Collection<T> values) throws Exception {
 		if (values == null) {
 			out.writeInt(-1);
 			return;
@@ -48,19 +49,19 @@ public abstract class CollectionCodec<T> implements Codec<Collection<T>> {
 					if (sameGeneric && writeClass) {
 						writeClass = false;
 						genericCodec = (Codec<T>) laser.getCodec(value.getClass());
-						laser.writeClass(out, value.getClass());
+						laser.writeClass(context, out, value.getClass());
 					} else if (!sameGeneric) {
-						laser.writeClass(out, value.getClass());
+						laser.writeClass(context, out, value.getClass());
 						genericCodec = (Codec<T>) laser.getCodec(value.getClass());
 					}
 				}
-				genericCodec.encode(laser, out, value);
+				genericCodec.encode(laser, context, out, value);
 			}
 		}
 	}
 
 	@Override
-	public Collection<T> decode(Laser laser, InputStream in, Class<Collection<T>> type) throws Exception {
+	public Collection<T> decode(Laser laser, Context context, InputStream in, Class<Collection<T>> type) throws Exception {
 		int size = in.readInt();
 		if (size == -1) {
 			return null;
@@ -77,15 +78,15 @@ public abstract class CollectionCodec<T> implements Codec<Collection<T>> {
 			for (int i = 0; i < size; i++) {
 				if (!isFinal) {
 					if (!sameGeneric) {
-						genericType = laser.readClass(in);
+						genericType = laser.readClass(context, in);
 						genericCodec = laser.getCodec(genericType);
 					} else if (sameGeneric && readClass) {
 						readClass = false;
-						genericType = laser.readClass(in);
+						genericType = laser.readClass(context, in);
 						genericCodec = laser.getCodec(genericType);
 					}
 				}
-				values.add(genericCodec.decode(laser, in, genericType));
+				values.add(genericCodec.decode(laser, context, in, genericType));
 			}
 		}
 		return values;

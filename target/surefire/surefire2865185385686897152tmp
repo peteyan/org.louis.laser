@@ -1,0 +1,34 @@
+#surefire
+#Thu Dec 11 22:51:48 CST 2014
+testClassesDirectory=/usr/local/louis/org.louis-parent/org.louis.laser/target/test-classes
+classPathUrl.4=/server/apache-maven-3.2.2/.m2/repository/org/javassist/javassist/3.18.1-GA/javassist-3.18.1-GA.jar
+classPathUrl.3=/server/apache-maven-3.2.2/.m2/repository/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar
+classPathUrl.2=/server/apache-maven-3.2.2/.m2/repository/org/msgpack/msgpack/0.6.11/msgpack-0.6.11.jar
+useManifestOnlyJar=true
+classPathUrl.1=/usr/local/louis/org.louis-parent/org.louis.laser/target/classes
+reportsDirectory=/usr/local/louis/org.louis-parent/org.louis.laser/target/surefire-reports
+classPathUrl.0=/usr/local/louis/org.louis-parent/org.louis.laser/target/test-classes
+dirscanner.0=directoryScannerOptions
+providerConfiguration=org.apache.maven.surefire.junit.JUnit3Provider
+testSuiteDefinitionTestSourceDirectory=/usr/local/louis/org.louis-parent/org.louis.laser/src/test/java
+surefireClassPathUrl.1=/server/apache-maven-3.2.2/.m2/repository/org/apache/maven/surefire/surefire-api/2.7.1/surefire-api-2.7.1.jar
+surefireClassPathUrl.0=/server/apache-maven-3.2.2/.m2/repository/org/apache/maven/surefire/surefire-junit3/2.7.1/surefire-junit3-2.7.1.jar
+report.2=org.apache.maven.surefire.report.XMLReporter
+useSystemClassLoader=true
+report.1=org.apache.maven.surefire.report.BriefFileReporter
+report.0=org.apache.maven.surefire.report.ForkingConsoleReporter
+excludes0=**/*$*
+isTrimStackTrace=true
+dirscanner.0.params=/usr/local/louis/org.louis-parent/org.louis.laser/target/test-classes|[**/Test*.java, **/*Test.java, **/*TestCase.java]|[**/*$*]
+includes2=**/*TestCase.java
+enableAssertions=true
+includes1=**/*Test.java
+failIfNoTests=false
+includes0=**/Test*.java
+dirscanner.0.types=java.io.File|java.util.ArrayList|java.util.ArrayList
+classPathUrl.9=/server/apache-maven-3.2.2/.m2/repository/log4j/log4j/1.2.17/log4j-1.2.17.jar
+classPathUrl.8=/server/apache-maven-3.2.2/.m2/repository/org/slf4j/slf4j-log4j12/1.6.6/slf4j-log4j12-1.6.6.jar
+classPathUrl.7=/server/apache-maven-3.2.2/.m2/repository/org/slf4j/slf4j-api/1.6.6/slf4j-api-1.6.6.jar
+childDelegation=false
+classPathUrl.6=/server/louis/lib/org.louis.logger-0.1.jar
+classPathUrl.5=/server/apache-maven-3.2.2/.m2/repository/org/objenesis/objenesis/2.1/objenesis-2.1.jar

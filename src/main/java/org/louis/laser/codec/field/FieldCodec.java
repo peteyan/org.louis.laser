@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.louis.laser.Context;
 import org.louis.laser.Laser;
 import org.louis.laser.codec.Codec;
 import org.louis.laser.io.InputStream;
@@ -75,17 +76,17 @@ public class FieldCodec<T> implements Codec<T> {
 	}
 
 	@Override
-	public void encode(Laser laser, OutputStream out, T value) throws Exception {
+	public void encode(Laser laser, Context context, OutputStream out, T value) throws Exception {
 		for (FieldDefinition fieldDefinition : definitions) {
-			fieldDefinition.encode(laser, out, value);
+			fieldDefinition.encode(laser, context, out, value);
 		}
 	}
 
 	@Override
-	public T decode(Laser laser, InputStream in, Class<T> type) throws Exception {
+	public T decode(Laser laser, Context context, InputStream in, Class<T> type) throws Exception {
 		T obj = laser.newInstance(type);
 		for (FieldDefinition fieldDefinition : definitions) {
-			fieldDefinition.decode(laser, in, obj);
+			fieldDefinition.decode(laser, context, in, obj);
 		}
 		return obj;
 	}

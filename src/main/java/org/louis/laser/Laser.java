@@ -53,7 +53,6 @@ import org.objenesis.instantiator.ObjectInstantiator;
 public final class Laser {
 	private static final Laser laser;
 	private static final AtomicInteger HEADER = new AtomicInteger(-1);
-	private static final ThreadLocal<Context> CONTEXT = new ThreadLocal<Context>();
 	private Map<Class<?>, Codec<?>> codecs = new HashMap<Class<?>, Codec<?>>();
 	private Map<Class<?>, Class<? extends Codec>> codecTypes = new HashMap<Class<?>, Class<? extends Codec>>();
 	private Map<Class<?>, Integer> typeToHeaders = new HashMap<Class<?>, Integer>();
@@ -193,16 +192,11 @@ public final class Laser {
 		return codec;
 	}
 
-	public void writeClass(OutputStream out, Class<?> type) throws Exception {
+	public void writeClass(Context context, OutputStream out, Class<?> type) throws Exception {
 		Integer header = typeToHeaders.get(type);
 		if (header != null) {
 			out.writeInt(header);
 			return;
-		}
-		Context context = CONTEXT.get();
-		if (context == null) {
-			context = new Context();
-			CONTEXT.set(context);
 		}
 		header = context.getHeader(type);
 		if (header != null) {
@@ -213,15 +207,10 @@ public final class Laser {
 		out.writeString(type.getName());
 	}
 
-	public <T> Class<T> readClass(InputStream in) throws Exception {
+	public <T> Class<T> readClass(Context context, InputStream in) throws Exception {
 		int header = in.readInt();
 		Class<T> type = (Class<T>) headerToTypes.get(header);
 		if (type == null) {
-			Context context = CONTEXT.get();
-			if (context == null) {
-				context = new Context();
-				CONTEXT.set(context);
-			}
 			type = (Class<T>) context.getType(header);
 			if (type == null) {
 				type = (Class<T>) Class.forName(in.readString());
@@ -231,23 +220,23 @@ public final class Laser {
 		return type;
 	}
 
-	public void writeClassAndObject(OutputStream out, Object obj) throws Exception {
-		writeClass(out, obj.getClass());
-		writeObject(out, obj);
+	public void writeClassAndObject(Context context, OutputStream out, Object obj) throws Exception {
+		writeClass(context, out, obj.getClass());
+		writeObject(context, out, obj);
 	}
 
-	public void writeObject(OutputStream out, Object obj) throws Exception {
+	public void writeObject(Context context, OutputStream out, Object obj) throws Exception {
 		Codec codec = getCodec(obj.getClass());
-		codec.encode(this, out, obj);
+		codec.encode(this, context, out, obj);
 	}
 
-	public <T> T readClassAndObject(InputStream in) throws Exception {
-		return (T) readObject(in, readClass(in));
+	public <T> T readClassAndObject(Context context, InputStream in) throws Exception {
+		return (T) readObject(context, in, readClass(context, in));
 	}
 
-	public <T> T readObject(InputStream in, Class<T> type) throws Exception {
+	public <T> T readObject(Context context, InputStream in, Class<T> type) throws Exception {
 		Codec codec = getCodec(type);
-		return (T) codec.decode(this, in, type);
+		return (T) codec.decode(this, context, in, type);
 	}
 
 	public FieldFactory getFieldFactory() {
