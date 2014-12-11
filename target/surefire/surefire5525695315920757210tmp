@@ -1,0 +1,5 @@
+#surefire
+#Thu Dec 11 17:55:08 CST 2014
+user.dir=/usr/local/louis/org.louis-parent/org.louis.laser
+localRepository=/server/apache-maven-3.2.2/.m2/repository
+basedir=/usr/local/louis/org.louis-parent/org.louis.laser
