@@ -151,6 +151,10 @@ public final class Laser {
 		this.encodeFieldName = encodeFieldName;
 	}
 
+	public void registerType(Class<?> type) {
+		getCodec(type);
+	}
+
 	public <T> Codec<T> getCodec(Class<T> type) {
 		return (Codec<T>) getCodec(type, null);
 	}
