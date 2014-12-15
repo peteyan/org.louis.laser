@@ -7,21 +7,10 @@ import org.louis.laser.Laser;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public abstract class FieldDefinition {
+public interface FieldDefinition<T> {
 
-	protected Field field;
+	public void encode(Laser laser, Context context, Field field, OutputStream out, T value) throws Exception;
 
-	public FieldDefinition(Field field) {
-		this.field = field;
-	}
-
-	@Override
-	public String toString() {
-		return field.getName();
-	}
-
-	protected abstract void encode(Laser laser, Context context, OutputStream out, Object obj) throws Exception;
-
-	protected abstract void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception;
+	public T decode(Laser laser, Context context, Field field, InputStream in) throws Exception;
 
 }

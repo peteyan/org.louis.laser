@@ -8,20 +8,28 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class ByteField extends FieldDefinition {
+public class ByteField implements FieldDefinition<Byte> {
 
-	public ByteField(Field field) {
-		super(field);
+	private boolean wrapped;
+
+	public ByteField(boolean wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	protected void encode(Laser laser,Context context, OutputStream output, Object obj) throws Exception {
-		output.writeByte(field.getByte(obj));
+	public void encode(Laser laser, Context context, Field field, OutputStream out, Byte value) throws Exception {
+		if (wrapped && out.writeBoolean(value == null)) {
+			return;
+		}
+		out.writeByte(value);
 	}
 
 	@Override
-	protected void decode(Laser laser,Context context, InputStream in, Object obj) throws Exception {
-		field.setByte(obj, in.readByte());
+	public Byte decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (wrapped && in.readBoolean()) {
+			return null;
+		}
+		return in.readByte();
 	}
 
 }

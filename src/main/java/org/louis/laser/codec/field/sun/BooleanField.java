@@ -8,20 +8,28 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class BooleanField extends FieldDefinition {
+public class BooleanField implements FieldDefinition<Boolean> {
 
-	public BooleanField(Field field) {
-		super(field);
+	private boolean wrapped;
+
+	public BooleanField(boolean wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		output.writeBoolean(field.getBoolean(obj));
+	public void encode(Laser laser, Context context, Field field, OutputStream out, Boolean value) throws Exception {
+		if (wrapped && out.writeBoolean(value == null)) {
+			return;
+		}
+		out.writeBoolean(value);
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		field.setBoolean(obj, in.readBoolean());
+	public Boolean decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (wrapped && in.readBoolean()) {
+			return null;
+		}
+		return in.readBoolean();
 	}
 
 }

@@ -8,19 +8,27 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class IntField extends FieldDefinition {
+public class IntField implements FieldDefinition<Integer> {
 
-	public IntField(Field field) {
-		super(field);
+	private boolean wrapped;
+
+	public IntField(boolean wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		output.writeInt(field.getInt(obj));
+	public void encode(Laser laser, Context context, Field field, OutputStream out, Integer value) throws Exception {
+		if (wrapped && out.writeBoolean(value == null)) {
+			return;
+		}
+		out.writeInt(value);
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		field.setInt(obj, in.readInt());
+	public Integer decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (wrapped && in.readBoolean()) {
+			return null;
+		}
+		return in.readInt();
 	}
 }

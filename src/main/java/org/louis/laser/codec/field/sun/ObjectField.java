@@ -9,45 +9,30 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-@SuppressWarnings("unchecked")
-public class ObjectField<T> extends FieldDefinition {
+public class ObjectField<T> implements FieldDefinition<T> {
 
 	private Codec<T> codec = null;
 	private Class<T> fieldType;
 
-	public ObjectField(Field field, Class<T> fieldType, Codec<T> codec) {
-		super(field);
+	public ObjectField(Class<T> fieldType, Codec<T> codec) {
 		this.fieldType = fieldType;
 		this.codec = codec;
 	}
 
-	protected T get(Object obj) throws IllegalArgumentException, IllegalAccessException {
-		return (T) field.get(obj);
-	}
-
-	protected void set(Object obj, T value) throws IllegalArgumentException, IllegalAccessException {
-		field.set(obj, value);
-	}
-
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		T value = get(obj);
-		output.writeBoolean(value != null);
-		if (value == null) {
+	public void encode(Laser laser, Context context, Field field, OutputStream out, T value) throws Exception {
+		if (out.writeBoolean(value == null)) {
 			return;
 		}
-		codec.encode(laser, context, output, value);
+		codec.encode(laser, context, out, value);
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		boolean b = in.readBoolean();
-		if (b) {
-			T value = codec.decode(laser, context, in, fieldType);
-			set(obj, value);
-		} else {
-			set(obj, null);
+	public T decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (in.readBoolean()) {
+			return null;
 		}
+		return codec.decode(laser, context, in, fieldType);
 	}
 
 }

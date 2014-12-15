@@ -9,29 +9,27 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class DateField extends FieldDefinition {
+public class DateField implements FieldDefinition<Date> {
 
-	public DateField(Field field) {
-		super(field);
+	public DateField() {
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		Date date = (Date) field.get(obj);
-		if (date == null) {
+	public void encode(Laser laser, Context context, Field field, OutputStream output, Date value) throws Exception {
+		if (value == null) {
 			output.writeLong(-1);
 			return;
 		}
-		output.writeLong(date.getTime());
+		output.writeLong(value.getTime());
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
+	public Date decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
 		long time = in.readLong();
 		if (time == -1) {
-			return;
+			return null;
 		}
-		field.set(obj, new Date(time));
+		return new Date(time);
 	}
 
 }

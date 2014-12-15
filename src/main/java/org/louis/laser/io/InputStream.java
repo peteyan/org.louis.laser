@@ -31,8 +31,7 @@ public abstract class InputStream extends java.io.InputStream {
 	}
 
 	public boolean readBoolean() {
-		byte b = readByte();
-		return b == ((byte) 0) ? true : false;
+		return (readByte() == (byte) 0) ? true : false;
 	}
 
 	public byte[] readBytes() {

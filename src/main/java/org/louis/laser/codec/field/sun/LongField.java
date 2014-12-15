@@ -8,20 +8,28 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class LongField extends FieldDefinition {
+public class LongField implements FieldDefinition<Long> {
 
-	public LongField(Field field) {
-		super(field);
+	private boolean wrapped;
+
+	public LongField(boolean wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		output.writeLong(field.getLong(obj));
+	public void encode(Laser laser, Context context, Field field, OutputStream out, Long value) throws Exception {
+		if (wrapped && out.writeBoolean(value == null)) {
+			return;
+		}
+		out.writeLong(value);
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		field.setLong(obj, in.readLong());
+	public Long decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (wrapped && in.readBoolean()) {
+			return null;
+		}
+		return in.readLong();
 	}
 
 }

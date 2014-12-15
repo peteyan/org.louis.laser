@@ -8,20 +8,28 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class ShortField extends FieldDefinition {
+public class ShortField implements FieldDefinition<Short> {
 
-	public ShortField(Field field) {
-		super(field);
+	private boolean wrapped;
+
+	public ShortField(boolean wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		output.writeShort(field.getShort(obj));
+	public void encode(Laser laser, Context context, Field field, OutputStream out, Short value) throws Exception {
+		if (wrapped && out.writeBoolean(value == null)) {
+			return;
+		}
+		out.writeShort(value);
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		field.setShort(obj, in.readShort());
+	public Short decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (wrapped && in.readBoolean()) {
+			return null;
+		}
+		return in.readShort();
 	}
 
 }

@@ -66,29 +66,29 @@ public final class Laser {
 	}
 
 	private Laser() {
-		registerCodec(byte.class, new ByteCodec(), true);
-		registerCodec(Byte.class, new ByteCodec(), true);
+		registerCodec(byte.class, new ByteCodec(false), true);
+		registerCodec(Byte.class, new ByteCodec(true), true);
 		registerCodec(byte[].class, new ByteArrayCodec(), true);
-		registerCodec(char.class, new CharCodec(), true);
-		registerCodec(Character.class, new CharCodec(), true);
+		registerCodec(char.class, new CharCodec(false), true);
+		registerCodec(Character.class, new CharCodec(true), true);
 		registerCodec(char[].class, new CharArrayCodec(), true);
-		registerCodec(short.class, new ShortCodec(), true);
-		registerCodec(Short.class, new ShortCodec(), true);
+		registerCodec(short.class, new ShortCodec(false), true);
+		registerCodec(Short.class, new ShortCodec(true), true);
 		registerCodec(short[].class, new ShortArrayCodec(), true);
-		registerCodec(int.class, new IntCodec(), true);
-		registerCodec(Integer.class, new IntCodec(), true);
+		registerCodec(int.class, new IntCodec(false), true);
+		registerCodec(Integer.class, new IntCodec(true), true);
 		registerCodec(int[].class, new IntArrayCodec(), true);
-		registerCodec(long.class, new LongCodec(), true);
-		registerCodec(Long.class, new LongCodec(), true);
+		registerCodec(long.class, new LongCodec(false), true);
+		registerCodec(Long.class, new LongCodec(true), true);
 		registerCodec(long[].class, new LongArrayCodec(), true);
-		registerCodec(float.class, new FloatCodec(), true);
-		registerCodec(Float.class, new FloatCodec(), true);
+		registerCodec(float.class, new FloatCodec(false), true);
+		registerCodec(Float.class, new FloatCodec(true), true);
 		registerCodec(float[].class, new FloatArrayCodec(), true);
-		registerCodec(double.class, new DoubleCodec(), true);
-		registerCodec(Double.class, new DoubleCodec(), true);
+		registerCodec(double.class, new DoubleCodec(false), true);
+		registerCodec(Double.class, new DoubleCodec(true), true);
 		registerCodec(double[].class, new DoubleArrayCodec(), true);
-		registerCodec(boolean.class, new BooleanCodec(), true);
-		registerCodec(Boolean.class, new BooleanCodec(), true);
+		registerCodec(boolean.class, new BooleanCodec(false), true);
+		registerCodec(Boolean.class, new BooleanCodec(true), true);
 		registerCodec(boolean[].class, new BooleanArrayCodec(), true);
 		registerCodec(String.class, new StringCodec(), true);
 		registerCodec(String[].class, new StringArrayCodec(), true);
@@ -217,7 +217,8 @@ public final class Laser {
 		if (type == null) {
 			type = (Class<T>) context.getType(header);
 			if (type == null) {
-				type = (Class<T>) Class.forName(in.readString());
+				String clasName = in.readString();
+				type = (Class<T>) Class.forName(clasName);
 				context.addType(header, type);
 			}
 		}
@@ -249,10 +250,6 @@ public final class Laser {
 
 	static {
 		laser = new Laser();
-	}
-
-	public static void main(String[] args) throws Exception {
-		System.out.println(100 >> 7);
 	}
 
 }

@@ -8,20 +8,15 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class StringField extends FieldDefinition {
+public class StringField implements FieldDefinition<String> {
 
-	public StringField(Field field) {
-		super(field);
+	@Override
+	public void encode(Laser laser, Context context, Field field, OutputStream out, String value) throws Exception {
+		out.writeString(value);
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		output.writeString((String) field.get(obj));
+	public String decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		return in.readString();
 	}
-
-	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		field.set(obj, in.readString());
-	}
-
 }

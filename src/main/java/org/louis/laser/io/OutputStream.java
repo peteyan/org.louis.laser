@@ -37,12 +37,13 @@ public abstract class OutputStream extends java.io.OutputStream {
 		}
 	}
 
-	public void writeBoolean(boolean value) {
+	public boolean writeBoolean(boolean value) {
 		if (value) {
 			writeByte((byte) 0);
 		} else {
-			writeByte((byte) 1);
+			writeByte((byte) -1);
 		}
+		return value;
 	}
 
 	public void writeShort(short value) {
@@ -51,7 +52,7 @@ public abstract class OutputStream extends java.io.OutputStream {
 	}
 
 	public void writeInt(int value) {
-//		value = (value << 1) ^ (value >> 31);
+		// value = (value << 1) ^ (value >> 31);
 		if (value >> 7 == 0) {
 			writeByte((byte) value);
 			return;

@@ -8,20 +8,28 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class FloatField extends FieldDefinition {
+public class FloatField implements FieldDefinition<Float> {
 
-	public FloatField(Field field) {
-		super(field);
+	private boolean wrapped;
+
+	public FloatField(boolean wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		output.writeFloat(field.getFloat(obj));
+	public void encode(Laser laser, Context context, Field field, OutputStream out, Float value) throws Exception {
+		if (wrapped && out.writeBoolean(value == null)) {
+			return;
+		}
+		out.writeFloat(value);
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		field.setFloat(obj, in.readFloat());
+	public Float decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (wrapped && in.readBoolean()) {
+			return null;
+		}
+		return in.readFloat();
 	}
 
 }

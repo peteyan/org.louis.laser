@@ -13,7 +13,7 @@ public class LaserTest {
 	public static void main(String[] args) throws Exception {
 		Map<String, A> as = new HashMap<String, A>();
 		List<A> list = new ArrayList<A>();
-		int length = 100;
+		int length = 200;
 		for (int i = 0; i < length; i++) {
 			list.add(new A("a" + i));
 			list.add(new B("b" + i));
@@ -27,12 +27,14 @@ public class LaserTest {
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		long start = System.currentTimeMillis();
-		Laser.laser().writeClassAndObject(new Context(), out, m);
+		Context context = new Context();
+		Laser.laser().writeClassAndObject(context, out, m);
 		System.out.println("writeclass=" + (System.currentTimeMillis() - start));
 		System.out.println("length=" + out.toByteArray().length);
 
+		context = new Context();
 		start = System.currentTimeMillis();
-		Laser.laser().readClassAndObject(new Context(), new ByteArrayInputStream(out.toByteArray()));
+		Laser.laser().readClassAndObject(context, new ByteArrayInputStream(out.toByteArray()));
 		System.out.println("readclass=" + (System.currentTimeMillis() - start));
 	}
 

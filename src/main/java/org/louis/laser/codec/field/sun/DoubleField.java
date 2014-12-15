@@ -8,20 +8,28 @@ import org.louis.laser.codec.field.FieldDefinition;
 import org.louis.laser.io.InputStream;
 import org.louis.laser.io.OutputStream;
 
-public class DoubleField extends FieldDefinition {
+public class DoubleField implements FieldDefinition<Double> {
 
-	public DoubleField(Field field) {
-		super(field);
+	private boolean wrapped;
+
+	public DoubleField(boolean wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	protected void encode(Laser laser, Context context, OutputStream output, Object obj) throws Exception {
-		output.writeDouble(field.getDouble(obj));
+	public void encode(Laser laser, Context context, Field field, OutputStream out, Double value) throws Exception {
+		if (wrapped && out.writeBoolean(value == null)) {
+			return;
+		}
+		out.writeDouble(value);
 	}
 
 	@Override
-	protected void decode(Laser laser, Context context, InputStream in, Object obj) throws Exception {
-		field.setDouble(obj, in.readDouble());
+	public Double decode(Laser laser, Context context, Field field, InputStream in) throws Exception {
+		if (wrapped && in.readBoolean()) {
+			return null;
+		}
+		return in.readDouble();
 	}
 
 }

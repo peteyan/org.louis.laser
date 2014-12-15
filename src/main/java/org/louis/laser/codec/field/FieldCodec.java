@@ -7,7 +7,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.louis.laser.Context;
 import org.louis.laser.Laser;
@@ -19,7 +21,8 @@ public class FieldCodec<T> implements Codec<T> {
 
 	private Laser laser;
 	private Class<T> type;
-	private List<FieldDefinition> definitions = new ArrayList<FieldDefinition>();
+	private List<Field> fields = new ArrayList<Field>();
+	private Map<Field, FieldDefinition<?>> wrappedFields = new HashMap<Field, FieldDefinition<?>>();
 
 	public FieldCodec(Laser laser, Class<T> type) {
 		this.laser = laser;
@@ -29,33 +32,35 @@ public class FieldCodec<T> implements Codec<T> {
 
 	@SuppressWarnings("unchecked")
 	private void init() {
+		Class<T> type = this.type;
 		if (type.isInterface()) {
 			return;
 		}
 		while (!(type == Object.class)) {
-			Field[] fields = type.getDeclaredFields();
-			for (Field field : fields) {
+			Field[] declaredFields = type.getDeclaredFields();
+			for (Field field : declaredFields) {
 				field.setAccessible(true);
 				if (Modifier.isStatic(field.getModifiers())) {
 					continue;
 				}
 				Class<?> fieldType = field.getType();
 				Type genericType = field.getGenericType();
-				FieldDefinition fieldDefinition = null;
+				FieldDefinition<?> fieldDefinition = null;
 				if (fieldType == genericType) {
-					fieldDefinition = laser.getFieldFactory().newFieldDefinition(laser, field, fieldType);
+					fieldDefinition = laser.getFieldFactory().newFieldDefinition(laser, fieldType);
 				} else {
 					Class<?>[] genericTypes = getGenericTypes(genericType);
-					fieldDefinition = laser.getFieldFactory().newFieldDefinition(laser, field, fieldType, genericTypes);
+					fieldDefinition = laser.getFieldFactory().newFieldDefinition(laser, fieldType, genericTypes);
 				}
-				definitions.add(fieldDefinition);
+				wrappedFields.put(field, fieldDefinition);
+				this.fields.add(field);
 			}
 			type = (Class<T>) type.getSuperclass();
 		}
-		Collections.sort(definitions, new Comparator<FieldDefinition>() {
+		Collections.sort(fields, new Comparator<Field>() {
 			@Override
-			public int compare(FieldDefinition o1, FieldDefinition o2) {
-				return o1.field.getName().compareTo(o2.field.getName());
+			public int compare(Field o1, Field o2) {
+				return o1.getName().hashCode() - o2.getName().hashCode();
 			}
 		});
 	}
@@ -75,18 +80,24 @@ public class FieldCodec<T> implements Codec<T> {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void encode(Laser laser, Context context, OutputStream out, T value) throws Exception {
-		for (FieldDefinition fieldDefinition : definitions) {
-			fieldDefinition.encode(laser, context, out, value);
+		for (Field field : fields) {
+			FieldDefinition<Object> fieldDefinition = (FieldDefinition<Object>) wrappedFields.get(field);
+			fieldDefinition.encode(laser, context, field, out, field.get(value));
 		}
+
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T decode(Laser laser, Context context, InputStream in, Class<T> type) throws Exception {
 		T obj = laser.newInstance(type);
-		for (FieldDefinition fieldDefinition : definitions) {
-			fieldDefinition.decode(laser, context, in, obj);
+		for (Field field : fields) {
+			FieldDefinition<Object> fieldDefinition = (FieldDefinition<Object>) wrappedFields.get(field);
+			Object value = fieldDefinition.decode(laser, context, field, in);
+			field.set(obj, value);
 		}
 		return obj;
 	}
