@@ -11,12 +11,12 @@ import org.louis.laser.io.ByteArrayOutputStream;
 public class LaserTest {
 
 	public static void main(String[] args) throws Exception {
-		Map<String, A> as = new HashMap<String, A>();
-		List<A> list = new ArrayList<A>();
-		int length = 200;
+		int length = 100;
+		Map<String, A> as = new HashMap<String, A>(length);
+		List<C> list = new ArrayList<C>(length);
 		for (int i = 0; i < length; i++) {
-			list.add(new A("a" + i));
-			list.add(new B("b" + i));
+			list.add(new C("a" + i));
+			list.add(new C("b" + i));
 			list.add(new C("c" + i));
 			as.put("a" + i, new A("1"));
 			as.put("b" + i, new B("2"));
@@ -41,10 +41,13 @@ public class LaserTest {
 	static class M {
 		int i = 0;
 		Integer j = 1;
-		List<A> list;
-		Map<String, A> as;
+		Object list;
+		Object as;
 
-		public M(Map<String, A> as, List<A> list) {
+		public M() {
+		}
+
+		public M(Map<String, A> as, List<C> list) {
 			super();
 			this.as = as;
 			this.list = list;
@@ -52,6 +55,9 @@ public class LaserTest {
 	}
 
 	static class A {
+		public A() {
+		}
+
 		public A(String a) {
 			super();
 			this.a = a;
@@ -61,6 +67,10 @@ public class LaserTest {
 	}
 
 	static class B extends A {
+
+		public B() {
+		}
+
 		public B(String b) {
 			super("A" + b);
 			this.b = b;
@@ -70,6 +80,8 @@ public class LaserTest {
 	}
 
 	static class C extends A {
+		public C() {
+		}
 
 		public C(String c) {
 			super("C" + c);

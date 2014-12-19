@@ -60,7 +60,7 @@ public class FieldCodec<T> implements Codec<T> {
 		Collections.sort(fields, new Comparator<Field>() {
 			@Override
 			public int compare(Field o1, Field o2) {
-				return o1.getName().hashCode() - o2.getName().hashCode();
+				return o1.getName().compareTo(o2.getName());
 			}
 		});
 	}
@@ -87,7 +87,6 @@ public class FieldCodec<T> implements Codec<T> {
 			FieldDefinition<Object> fieldDefinition = (FieldDefinition<Object>) wrappedFields.get(field);
 			fieldDefinition.encode(laser, context, field, out, field.get(value));
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")

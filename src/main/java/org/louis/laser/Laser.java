@@ -52,6 +52,7 @@ import org.objenesis.instantiator.ObjectInstantiator;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public final class Laser {
 	private static final Laser laser;
+
 	private static final AtomicInteger HEADER = new AtomicInteger(-1);
 	private Map<Class<?>, Codec<?>> codecs = new HashMap<Class<?>, Codec<?>>();
 	private Map<Class<?>, Class<? extends Codec>> codecTypes = new HashMap<Class<?>, Class<? extends Codec>>();
@@ -59,7 +60,6 @@ public final class Laser {
 	private Map<Integer, Class<?>> headerToTypes = new HashMap<Integer, Class<?>>();
 	private FieldFactory factory = new SunFieldFactory();
 	private Objenesis objenesis = new ObjenesisStd(true);
-	private boolean encodeFieldName = true;
 
 	public static Laser laser() {
 		return laser;
@@ -141,14 +141,6 @@ public final class Laser {
 	public void removeCodec(Class<?> type) {
 		codecs.remove(type);
 		typeToHeaders.remove(type);
-	}
-
-	public boolean encodeFieldName() {
-		return this.encodeFieldName;
-	}
-
-	public void encodeFieldName(boolean encodeFieldName) {
-		this.encodeFieldName = encodeFieldName;
 	}
 
 	public void registerType(Class<?> type) {

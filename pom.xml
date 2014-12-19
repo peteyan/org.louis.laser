@@ -8,17 +8,11 @@
 		<groupId>org.louis</groupId>
 		<version>0.1</version>
 	</parent>
+
 	<artifactId>org.louis.laser</artifactId>
 	<name>org.louis.laser</name>
-	<url>http://maven.apache.org</url>
-	<properties>
-	</properties>
+
 	<dependencies>
-		<dependency>
-			<groupId>org.msgpack</groupId>
-			<artifactId>msgpack</artifactId>
-			<version>0.6.11</version>
-		</dependency>
 		<dependency>
 			<groupId>org.objenesis</groupId>
 			<artifactId>objenesis</artifactId>
